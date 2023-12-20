@@ -29,7 +29,7 @@ test_images, test_labels = test_images[:subset_size], test_labels[:subset_size]
 # Load CIFAR-10 class names
 class_names = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-# Function to display images with their predicted labels
+# Zobrazení obrázků
 def display_images(images, labels_true, labels_pred, class_names, num_images=5):
     plt.figure(figsize=(15, 3))
     for i in range(num_images):
@@ -39,7 +39,7 @@ def display_images(images, labels_true, labels_pred, class_names, num_images=5):
         plt.axis('off')
     plt.show()
 
-# Function to save images with their predicted labels
+# ukládání obrázků
 def save_images(images, labels_true, labels_pred, class_names, output_dir='output_images'):
     os.makedirs(output_dir, exist_ok=True)
     for i, img in enumerate(images):
