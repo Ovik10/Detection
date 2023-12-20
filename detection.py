@@ -13,12 +13,15 @@ import time
 import matplotlib.pyplot as plt
 from tensorflow.keras.preprocessing import image
 import numpy as np
+from sklearn.metrics import confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
 
 # načtení CIFAR-10 datasetu
 (train_images, train_labels), (test_images, test_labels) = datasets.cifar10.load_data()
 
 # Use a smaller subset for testing
-subset_size = 1000
+subset_size = 60000
 train_images, train_labels = train_images[:subset_size], train_labels[:subset_size]
 test_images, test_labels = test_images[:subset_size], test_labels[:subset_size]
 
@@ -96,6 +99,21 @@ print(f'Time taken for SVM model training: {end_time_training - start_time_train
 print(f'Time taken for HOG + SVM prediction: {end_time_prediction - start_time_prediction:.2f} seconds')
 print(f'Time taken for HOG + SVM to display: {end_time_displayH - start_time_displayH:.2f} seconds')
 
+
+# Vypočtení confusion matrix
+conf_matrix_hog_svm = confusion_matrix(test_labels, predictions_hog)
+
+# Normalizování confusion matrix
+conf_matrix_hog_svm_norm = conf_matrix_hog_svm.astype('float') / conf_matrix_hog_svm.sum(axis=1)[:, np.newaxis]
+
+# Graf normalizované confusion matrix
+plt.figure(figsize=(10, 8))
+sns.heatmap(conf_matrix_hog_svm_norm, annot=True, fmt=".2f", cmap="Blues", xticklabels=class_names, yticklabels=class_names)
+plt.title('Normalized Confusion Matrix - HOG+SVM')
+plt.xlabel('Predicted labels')
+plt.ylabel('True labels')
+plt.show()
+
 # předpřipravování dat pro CNN
 train_images_cnn, test_images_cnn = train_images / 255.0, test_images / 255.0
 train_labels_cnn = to_categorical(train_labels, 10)
@@ -142,4 +160,16 @@ print(f'Time taken for CNN model training: {end_time_cnn_training - start_time_c
 print(f'Time taken for CNN prediction: {end_time_cnn_prediction - start_time_cnn_prediction:.2f} seconds')
 print(f'Time taken for CNN display: {end_time_displayC - start_time_displayC:.2f} seconds')
 
+# Vypočtení confusion matrix
+conf_matrix_cnn = confusion_matrix(np.argmax(test_labels_cnn, axis=1), predictions_cnn)
 
+# Normalizování confusion matrix
+conf_matrix_cnn_norm = conf_matrix_cnn.astype('float') / conf_matrix_cnn.sum(axis=1)[:, np.newaxis]
+
+# Graf normalizované confusion matrix
+plt.figure(figsize=(10, 8))
+sns.heatmap(conf_matrix_cnn_norm, annot=True, fmt=".2f", cmap="Blues", xticklabels=class_names, yticklabels=class_names)
+plt.title('Normalized Confusion Matrix - CNN')
+plt.xlabel('Predicted labels')
+plt.ylabel('True labels')
+plt.show()
